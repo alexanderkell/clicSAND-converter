@@ -1,0 +1,3 @@
+([('conversion',
+   '/Users/alexanderkell/Documents/SGI/Projects/17-ClicSAND/src/dist/conversion',
+   'EXECUTABLE')],)

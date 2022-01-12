@@ -5,6 +5,7 @@ import tkinter.filedialog
 
 
 def osemosys_to_csv(input, output):
+    label = Label(text="Loading...").pack()
 
     columns = [
         "index",
@@ -50,31 +51,34 @@ def osemosys_to_csv(input, output):
         output_directory,
         index=False,
     )
+    label = Label(
+        text="Conversion successfully run, check your output directory for the file."
+    ).pack()
 
 
-a = Tk()
+if __name__ == "__main__":
+    global a
+    a = Tk()
+    a.title("OSeMOSYS Output Converter")
 
+    def file_open():
+        input_file = tkinter.filedialog.askopenfilename()
+        label = Label(text="Input file\n {}".format(input_file)).pack()
+        global input
+        input = input_file
+        return input
 
-def file_open():
-    input_file = tkinter.filedialog.askopenfilename()
-    label = Label(text=input_file).pack()
-    global input
-    input = input_file
-    return input
+    def directory_open():
+        output_file = tkinter.filedialog.askdirectory()
+        label = Label(text="Output directory\n {}".format(output_file)).pack()
+        global output
+        output = output_file
+        return output_file
 
+    input = Button(text="Input file", width=30, command=file_open).pack()
+    output = Button(text="Output directory", width=30, command=directory_open).pack()
+    run = Button(
+        text="Run", width=30, command=lambda: osemosys_to_csv(input, output)
+    ).pack()
 
-def directory_open():
-    output_file = tkinter.filedialog.askdirectory()
-    label = Label(text=output_file).pack()
-    global output
-    output = output_file
-    return output_file
-
-
-input = Button(text="Input file", width=30, command=file_open).pack()
-output = Button(text="Output file", width=30, command=directory_open).pack()
-run = Button(
-    text="Run", width=30, command=lambda: osemosys_to_csv(input, output)
-).pack()
-
-a.mainloop()
+    a.mainloop()
