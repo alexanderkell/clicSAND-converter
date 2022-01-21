@@ -4,7 +4,7 @@ from tkinter import *
 import tkinter.filedialog
 
 
-def osemosys_to_csv(input, output):
+def osemosys_to_csv(input, output_dir, output_filename):
     label = Label(text="Loading...").pack()
 
     columns = [
@@ -25,6 +25,7 @@ def osemosys_to_csv(input, output):
     osemosys_output = pd.read_csv(
         input, names=columns, sep="\(|,|\)|[ \t]{1,}", engine="python"
     )
+    osemosys_output = osemosys_output[osemosys_output["index"] != "Optimal"]
 
     def check_for_all_zeros(df):
         df.loc[:, (df == 0).all(axis=0)] = np.nan
@@ -46,13 +47,15 @@ def osemosys_to_csv(input, output):
 
     osemosys_cleaned = osemosys_cleaned.drop("index", axis=1)
 
-    output_directory = "{}/final_output.csv".format(output)
+    output_directory = "{}/{}.csv".format(output_dir, output_filename)
     osemosys_cleaned.to_csv(
         output_directory,
         index=False,
     )
     label = Label(
-        text="Conversion successfully run, check your output directory for the file."
+        text='Conversion successfully run, check your output directory for your file titled "{}.csv"'.format(
+            output_filename
+        )
     ).pack()
 
 
@@ -75,10 +78,23 @@ if __name__ == "__main__":
         output = output_file
         return output_file
 
-    input = Button(text="Input file", width=30, command=file_open).pack()
-    output = Button(text="Output directory", width=30, command=directory_open).pack()
+    input = Button(text="Input file", width=20, command=file_open).pack()
+    output = Button(text="Output directory", width=20, command=directory_open).pack()
+    label = Label(text="Set output filename:").pack()
+    output_filename_entry = Entry(a)
+
+    def get_filename():
+        global output_filename
+        output_filename = output_filename_entry.get()
+
+        label1 = Label(a, text="Output filename: {}".format(output_filename)).pack()
+
+    output_filename_entry.pack()
+    button1 = Button(text="Save output filename", width=20, command=get_filename).pack()
     run = Button(
-        text="Run", width=30, command=lambda: osemosys_to_csv(input, output)
+        text="Run",
+        width=20,
+        command=lambda: osemosys_to_csv(input, output, output_filename),
     ).pack()
 
     a.mainloop()
